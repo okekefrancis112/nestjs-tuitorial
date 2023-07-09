@@ -9,6 +9,7 @@ import {
   Post,
   Req,
   Res,
+  UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
