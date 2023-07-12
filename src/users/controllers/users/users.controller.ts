@@ -6,8 +6,10 @@ import {
   HttpStatus,
   Inject,
   Param,
+  ParseIntPipe,
   UseInterceptors,
 } from '@nestjs/common';
+import { UserNotFoundException } from 'src/users/exceptions/UserNotFound.exception';
 import { UsersService } from 'src/users/services/users/users.service';
 import { SerializedUser } from 'src/users/types';
 
@@ -24,10 +26,21 @@ export class UsersController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Get('/:username')
+  @Get('/username/:username')
   getByUsername(@Param('username') username: string) {
     const user = this.userService.getUserByUsername(username);
     if (user) return new SerializedUser(user);
     else throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('/id/:id')
+  getById(@Param('id', ParseIntPipe) id: number) {
+    const user = this.userService.getUserById(id);
+    if (user) return new SerializedUser(user);
+    // else throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    else {
+      throw new UserNotFoundException();
+    }
   }
 }
